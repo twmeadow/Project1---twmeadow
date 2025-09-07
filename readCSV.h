@@ -125,7 +125,7 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
 
 
         }
-    cout << endl << "Count: " << count  << endl;
+    //cout << endl << "Count: " << count  << endl;
     return count;
     }
 

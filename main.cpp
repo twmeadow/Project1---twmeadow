@@ -11,8 +11,12 @@ int main() {
     getDataFromFile(csvData, filePath);
 
     double avg = getAverageFromRow(csvData, "minutes");
+    double avg2 = getAverageFromRow(csvData, "heartBeatRate");
+    double avg3 = getAverageFromRow(csvData, "calories");
+    double avg4 = getAverageFromRow(csvData, "steps");
 
-    cout << avg << endl;
+
+    cout << avg4 << endl;
 
     return 0;
 }
