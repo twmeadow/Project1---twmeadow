@@ -10,5 +10,9 @@ int main() {
 
     getDataFromFile(csvData, filePath);
 
+    double avg = getAverageFromRow(csvData, "minutes");
+
+    cout << avg << endl;
+
     return 0;
 }

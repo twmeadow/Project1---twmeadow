@@ -64,7 +64,7 @@ class csvData
 };
 
 
-bool getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
+int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
 {
     //open file
     ifstream fileIn;
@@ -85,12 +85,7 @@ bool getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
         while (fileIn.peek() != EOF)
         {
             getline(fileIn, id, ',');
-
-
-
             getline(fileIn, date, ',');
-
-
 
             fileIn >> steps;
             if (steps == 0)
@@ -99,23 +94,15 @@ bool getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
             }
             fileIn >> comma;
 
-
             fileIn >> calories;
             if (calories == 0) { calories = -1; }
             fileIn >> comma;
 
-
-
             getline(fileIn, temp, ',');
             if (temp != "Not-Given")
             {
-
                 minutes = std::stoi(temp);
             }else{ minutes = -1;}
-
-
-            //fileIn >> comma;
-
 
             getline(fileIn, temp);
             if (temp != "Not-Given")
@@ -123,29 +110,51 @@ bool getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
                 heartBeatRate = std::stoi(temp);
             }else{ heartBeatRate = -1;}
 
-
-
-
             if (steps > 0 && calories > 0 && minutes > 0 && heartBeatRate > 0)
             {
                 csvDataV.push_back(csvData(id, date, steps, calories, minutes, heartBeatRate));
-                cout << "id:" << id << endl;
-                cout << "Date:" << date << endl;
-                cout << "steps:" << steps << endl;
-                cout << "calories:" << calories << endl;
-                cout << "minutes:" <<minutes << endl;
-                cout << "heartBeatRate:" << heartBeatRate << endl;
-                cout << endl << "Count: " << count << endl << endl;
+                //cout << "id:" << id << endl;
+                //cout << "Date:" << date << endl;
+                //cout << "steps:" << steps << endl;
+                //cout << "calories:" << calories << endl;
+                //cout << "minutes:" <<minutes << endl;
+                //cout << "heartBeatRate:" << heartBeatRate << endl;
+
                 count = count + 1;
             }
+
+
         }
-
-
+    cout << endl << "Count: " << count  << endl;
+    return count;
     }
 
 }
 
+double getAverageFromRow(vector<csvData>& csvDataV, string rowName)
+{
+    if (rowName == "steps" || rowName == "calories" || rowName == "minutes" || rowName == "heartBeatRate")
+    {
 
+        int sum = 0;
+        int count = 0;
+        double avg;
+        for (int i = 0; i < csvDataV.size(); i++)
+        {
+            if (rowName == "steps") { sum = sum + csvDataV[i].getSteps();}
+            if (rowName == "calories") { sum = sum + csvDataV[i].getCalories();}
+            if (rowName == "minutes") { sum = sum + csvDataV[i].getMinutes();}
+            if (rowName == "heartBeatRate") {sum = sum + csvDataV[i].getHeartBeatRate();}
+
+            count = count + 1;
+        }
+
+        avg = static_cast<double>(sum) / count;
+        return avg;
+
+    } else {return -1.0;}
+
+}
 
 
 #endif //PROJECT1_readCSV_H
