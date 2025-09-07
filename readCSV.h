@@ -19,10 +19,10 @@ class csvData
         int steps, minutes, heartBeatRate, calories;
 
     public:
-
         //only one constructor with all fields initialized, because this is the only way I am going to call it
         csvData(string id, string date, int steps, int calories, int minutes, int heartBeatRate)
         {
+            // initializing variables
             this->id = id;
             this->date = date;
             this->steps = steps;
@@ -82,11 +82,15 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
         getline(fileIn, header);
         //cout << header << endl;
 
+        //loop until file is empty
         while (fileIn.peek() != EOF)
         {
+            //read id and date into strings for simplicity
             getline(fileIn, id, ',');
             getline(fileIn, date, ',');
 
+            //I wanted to remove all of the 'dud' data,
+            //so if there were no steps those day I made the value -1, so its easily noticeable
             fileIn >> steps;
             if (steps == 0)
             {
@@ -94,24 +98,32 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
             }
             fileIn >> comma;
 
+            //I repeated this process for calories aswell.
             fileIn >> calories;
             if (calories == 0) { calories = -1; }
             fileIn >> comma;
 
+            //I did something similar for minutes and heart beat rate
             getline(fileIn, temp, ',');
             if (temp != "Not-Given")
             {
+                //This function call is something I had to google, I needed to read temp as a string
+                //I had to do this because in the CSV if there was no data it was entered as 'Not-Given' for this and HBR
+                //I looked on google how to cast strings to ints and this was the method it recommended which I used
                 minutes = std::stoi(temp);
             }else{ minutes = -1;}
 
             getline(fileIn, temp);
             if (temp != "Not-Given")
             {
+                //same justification for Heart Beat Rate
                 heartBeatRate = std::stoi(temp);
             }else{ heartBeatRate = -1;}
 
+            //If any of the data is left out, it will be set to negative 1, and it wont add the data to the vector
             if (steps > 0 && calories > 0 && minutes > 0 && heartBeatRate > 0)
             {
+                //create new csvData object, then push it to the vector of objects
                 csvDataV.push_back(csvData(id, date, steps, calories, minutes, heartBeatRate));
                 //cout << "id:" << id << endl;
                 //cout << "Date:" << date << endl;
@@ -120,6 +132,7 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
                 //cout << "minutes:" <<minutes << endl;
                 //cout << "heartBeatRate:" << heartBeatRate << endl;
 
+                //Count was just to check how many items there were
                 count = count + 1;
             }
 
@@ -133,25 +146,34 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
 
 double getAverageFromRow(vector<csvData>& csvDataV, string rowName)
 {
+    //Check that rowName is a valid string, these are the only options that have numeric data so you must enter one of these
     if (rowName == "steps" || rowName == "calories" || rowName == "minutes" || rowName == "heartBeatRate")
     {
-
+        //initializing variables
         int sum = 0;
         int count = 0;
         double avg;
+        //loop over the length of the vector
         for (int i = 0; i < csvDataV.size(); i++)
         {
+            //update sum depending on the row that was input via rowName
             if (rowName == "steps") { sum = sum + csvDataV[i].getSteps();}
             if (rowName == "calories") { sum = sum + csvDataV[i].getCalories();}
             if (rowName == "minutes") { sum = sum + csvDataV[i].getMinutes();}
             if (rowName == "heartBeatRate") {sum = sum + csvDataV[i].getHeartBeatRate();}
 
+            //update count
             count = count + 1;
         }
 
+        //preform standarg average calculation
+        //the static cast thing I also found because I was getting a bug from doing integer division
+        //I also found this off of google (when I say that I mean just the google AI summary that appears by default)
         avg = static_cast<double>(sum) / count;
+        //return average
         return avg;
 
+        //if its not a valid row that has been entered just return -1
     } else {return -1.0;}
 
 }
