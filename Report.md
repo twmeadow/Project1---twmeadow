@@ -16,12 +16,13 @@ I got this data set from Kaggle. Found at this link: https://www.kaggle.com/data
 * **Why you chose that dataset.**
 
 I own an apple watch and I like to look at my own health metrics. I was curious to see how the others stacked up. Also, this is a very big robust data set that I thought would be easy to work with 
-* How the rows are ordered by default (i.e. is the data sorted by a particular column?).
+* **How the rows are ordered by default (i.e. is the data sorted by a particular column?).**
 
 I think it is sorted by the User ID, but since this is just a large series of numbers its not particularly meaningful to sort by this. 
-* How you know your functions work correctly.
+* **How you know your functions work correctly.**
 
-There are over 15,000 rows even after removing the extra rows that did not contain all the data. However the data operation function I used was average which returned these values:
+I know the reading function works beacuse I have it return an integer that counts the number of rows it has read, that has usable data for each column. 
+To test the average function I made a print out in my main file which returns the following values:
 * Total rows in CSV:14980 
 
 * Average of Minutes: 420.259
@@ -29,7 +30,7 @@ There are over 15,000 rows even after removing the extra rows that did not conta
 * Average of Calories: 2590.01
 * Average of Steps: 9104.39
 
-This makes reasonable sense to me based off of my own health data. Before cleaning the set had 28,000 rows, so it seems very reasonable to have 15,000 after cleaning. Also the averages all make reasonable sense for an average of each of individual data.
+This makes reasonable sense to me based off of my own health data. Before cleaning the set had 28,000 rows, so it seems very reasonable to have 15,000 after cleaning. Also the averages all make reasonable sense for an average of each of individual data. I myself have similar numbers for averages so it seems very possible for this to be an average of a large set.  
 
 * **Why you chose that calculation for your dataset**.
 
