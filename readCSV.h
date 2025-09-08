@@ -74,7 +74,7 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
     {
         //define variables for file
         string id, date, header, endstr, temp;
-        int steps, calories, minutes, heartBeatRate;
+        int dataNum, steps, calories, minutes, heartBeatRate;
         char comma;
         int count = 0;
 
@@ -85,6 +85,8 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
         //loop until file is empty
         while (fileIn.peek() != EOF)
         {
+            fileIn >> dataNum;
+
             //read id and date into strings for simplicity
             getline(fileIn, id, ',');
             getline(fileIn, date, ',');
