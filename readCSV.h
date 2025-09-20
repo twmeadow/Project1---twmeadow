@@ -16,13 +16,14 @@ class csvData
     //Variable declaration
     private:
         string date, id;
-        int steps, minutes, heartBeatRate, calories;
+        int steps, minutes, heartBeatRate, calories, dataEntry;
 
     public:
         //only one constructor with all fields initialized, because this is the only way I am going to call it
-        csvData(string id, string date, int steps, int calories, int minutes, int heartBeatRate)
+        csvData(int dataEntry, string id, string date, int steps, int calories, int minutes, int heartBeatRate)
         {
             // initializing variables
+            this->dataEntry = dataEntry;
             this->id = id;
             this->date = date;
             this->steps = steps;
@@ -31,36 +32,47 @@ class csvData
             this->heartBeatRate = heartBeatRate;
         }
 
+        // default constructor so Queue can return a blank object
+        csvData()
+        {
+            this->dataEntry = 0;
+            this->id = "";
+            this->date = "";
+            this->steps = 0;
+            this->calories = 0;
+            this->minutes = 0;
+            this->heartBeatRate = 0;
+        }
+
         //Getters and setters
-
+        int getDataEntry() const {return dataEntry;}
         string getId() const {return id;}
-
         string getDate() const { return date; }
-
         int getSteps() const {return steps;}
-
         int getMinutes() const {return minutes;}
-
         int getHeartBeatRate() const {return heartBeatRate;}
-
         int getCalories() const {return calories;}
 
-
+        void setDataEntry(int dataEntry) {this->dataEntry = dataEntry;}
         void setId(string id) {this->id = id;}
-
         void setDate(string date) {this->date = date;}
-
         void setSteps(int steps) {this->steps = steps;}
-
         void setCalories(int calories) {this->calories = calories;}
-
         void setMinutes(int minutes) {this->minutes = minutes;}
-
         void setHeartBeatRate(int hbr) {heartBeatRate = hbr;}
 
-
-
-
+        // Overloaded << operator for printing
+        friend std::ostream& operator<<(std::ostream& os, const csvData& data)
+        {
+            os << "Data Entry: " << data.dataEntry << ", "
+                << "ID:" << data.id << ", "
+               << "Date:" << data.date << ", "
+               << data.steps << ", "
+               << data.calories << ", "
+               << data.minutes << ", "
+               << data.heartBeatRate;
+            return os;
+        }
 };
 
 
@@ -85,7 +97,8 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
         //loop until file is empty
         while (fileIn.peek() != EOF)
         {
-            fileIn >> dataNum;
+            fileIn >> dataNum;   // read "Data_Entry"
+            fileIn.get(comma);     // eat the comma so id lines up properly
 
             //read id and date into strings for simplicity
             getline(fileIn, id, ',');
@@ -107,26 +120,24 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
 
             //I did something similar for minutes and heart beat rate
             getline(fileIn, temp, ',');
-            if (temp != "Not-Given")
-            {
-                //This function call is something I had to google, I needed to read temp as a string
-                //I had to do this because in the CSV if there was no data it was entered as 'Not-Given' for this and HBR
-                //I looked on google how to cast strings to ints and this was the method it recommended which I used
+            if (temp.empty() || temp == "Not-Given") {
+                minutes = -1;
+            } else {
                 minutes = std::stoi(temp);
-            }else{ minutes = -1;}
+            }
 
-            getline(fileIn, temp);
-            if (temp != "Not-Given")
-            {
-                //same justification for Heart Beat Rate
+            getline(fileIn, temp, '\r');
+            if (temp.empty() || temp == "Not-Given") {
+                heartBeatRate = -1;
+            } else {
                 heartBeatRate = std::stoi(temp);
-            }else{ heartBeatRate = -1;}
+            }
 
             //If any of the data is left out, it will be set to negative 1, and it wont add the data to the vector
             if (steps > 0 && calories > 0 && minutes > 0 && heartBeatRate > 0)
             {
                 //create new csvData object, then push it to the vector of objects
-                csvDataV.push_back(csvData(id, date, steps, calories, minutes, heartBeatRate));
+                csvDataV.push_back(csvData(dataNum, id, date, steps, calories, minutes, heartBeatRate));
                 //cout << "id:" << id << endl;
                 //cout << "Date:" << date << endl;
                 //cout << "steps:" << steps << endl;
@@ -137,13 +148,11 @@ int getDataFromFile(vector<csvData>& csvDataV, const string &fileName)
                 //Count was just to check how many items there were
                 count = count + 1;
             }
-
-
         }
-    //cout << endl << "Count: " << count  << endl;
-    return count;
-    }
 
+        //cout << endl << "Count: " << count  << endl;
+        return count;
+    }
 }
 
 double getAverageFromRow(vector<csvData>& csvDataV, string rowName)
@@ -168,17 +177,13 @@ double getAverageFromRow(vector<csvData>& csvDataV, string rowName)
             count = count + 1;
         }
 
-        //preform standarg average calculation
-        //the static cast thing I also found because I was getting a bug from doing integer division
-        //I also found this off of google (when I say that I mean just the google AI summary that appears by default)
+        //preform standard average calculation
         avg = static_cast<double>(sum) / count;
         //return average
         return avg;
 
         //if its not a valid row that has been entered just return -1
     } else {return -1.0;}
-
 }
-
 
 #endif //PROJECT1_readCSV_H
